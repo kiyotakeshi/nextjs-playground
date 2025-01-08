@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { User } from '../types';
 
 export default function UsersPage() {
-    const visibleUserCount = 5;
+    const defaultDisplayCount = 5;
     const [users, setUsers] = useState<User[]>([]);
-    const [visibleCount, setVisibleCount] = useState(visibleUserCount);
+    const [visibleCount, setVisibleCount] = useState(defaultDisplayCount);
 
     useEffect(() => {
         fetch('/api/users')
@@ -19,6 +19,15 @@ export default function UsersPage() {
     const handleShowMore = () => {
         setVisibleCount(users.length); // すべてのユーザを表示
     };
+
+    const handleShowLess = () => {
+        setVisibleCount(defaultDisplayCount); // 初期件数に戻す
+    };
+
+    const shouldShowMoreButton =
+        users.length > defaultDisplayCount && visibleCount < users.length;
+    const shouldShowLessButton =
+        users.length > defaultDisplayCount && visibleCount >= users.length;
 
     return (
         <div style={{ padding: '20px' }}>
@@ -41,11 +50,17 @@ export default function UsersPage() {
                     </li>
                 ))}
             </ul>
-            {/* ボタンをリストの外に表示 */}
-            {visibleCount < users.length && (
-                <div style={{ textAlign: 'center', marginTop: '10px' }}>
+            {shouldShowMoreButton && (
+                <li style={{ textAlign: 'center', marginTop: '10px' }}>
                     <button onClick={handleShowMore}>もっと表示する</button>
-                </div>
+                </li>
+            )}
+            {shouldShowLessButton && (
+                <li style={{ textAlign: 'center', marginTop: '10px' }}>
+                    <button onClick={handleShowLess}>
+                        表示を少なくする({defaultDisplayCount}件)
+                    </button>
+                </li>
             )}
         </div>
     );

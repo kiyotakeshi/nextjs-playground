@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { User } from "../../types";
 
 export async function GET() {
+    console.log('call GET function in api/users/route.ts');
     const users: User[] = Array.from({ length: 10 }).map((_, i) => {
         const id = i + 1;
         return {

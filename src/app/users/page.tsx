@@ -4,9 +4,7 @@ import { useState, useEffect } from 'react';
 import { User } from '../types';
 
 export default function UsersPage() {
-    const defaultDisplayCount = 5;
     const [users, setUsers] = useState<User[]>([]);
-    const [visibleCount, setVisibleCount] = useState(defaultDisplayCount);
 
     useEffect(() => {
         fetch('/api/users')
@@ -16,24 +14,23 @@ export default function UsersPage() {
             });
     }, []);
 
-    const handleShowMore = () => {
-        setVisibleCount(users.length); // すべてのユーザを表示
-    };
+    const defaultDisplayCount = 5; // 初期表示件数
+    const [displayCount, setDisplayCount] = useState(defaultDisplayCount);
 
-    const handleShowLess = () => {
-        setVisibleCount(defaultDisplayCount); // 初期件数に戻す
-    };
+    const isExpanded = displayCount > defaultDisplayCount; // 全件表示中か判定
+    console.log('isExpanded:', isExpanded);
 
-    const shouldShowMoreButton =
-        users.length > defaultDisplayCount && visibleCount < users.length;
-    const shouldShowLessButton =
-        users.length > defaultDisplayCount && visibleCount >= users.length;
+    const toggleExpanded = () => {
+        console.log('toggleExpanded isExpanded:', isExpanded);
+        // isExpanded が true の状態で押されたら初期表示件数に戻す
+        setDisplayCount(isExpanded ? defaultDisplayCount : users.length);
+    };
 
     return (
         <div style={{ padding: '20px' }}>
             <h1>ユーザ一覧</h1>
             <ul style={{ listStyleType: 'none', padding: 0 }}>
-                {users.slice(0, visibleCount).map((user) => (
+                {users.slice(0, displayCount).map((user) => (
                     <li
                         key={user.id}
                         style={{
@@ -49,19 +46,16 @@ export default function UsersPage() {
                         <strong>出身地:</strong> {user.location}
                     </li>
                 ))}
+                {users.length > defaultDisplayCount && (
+                    <li style={{ textAlign: 'center', marginTop: '10px' }}>
+                        <button onClick={toggleExpanded}>
+                            {isExpanded
+                                ? `表示を少なくする(${defaultDisplayCount}件)`
+                                : 'もっと表示する'}
+                        </button>
+                    </li>
+                )}
             </ul>
-            {shouldShowMoreButton && (
-                <li style={{ textAlign: 'center', marginTop: '10px' }}>
-                    <button onClick={handleShowMore}>もっと表示する</button>
-                </li>
-            )}
-            {shouldShowLessButton && (
-                <li style={{ textAlign: 'center', marginTop: '10px' }}>
-                    <button onClick={handleShowLess}>
-                        表示を少なくする({defaultDisplayCount}件)
-                    </button>
-                </li>
-            )}
         </div>
     );
 }

@@ -5,6 +5,8 @@ import { User } from '../types';
 
 export default function UsersPage() {
     const [users, setUsers] = useState<User[]>([]);
+    const [isExpanded, setIsExpanded] = useState(false);
+    const initialDisplayCount = 5;
 
     useEffect(() => {
         fetch('/api/users')
@@ -14,23 +16,15 @@ export default function UsersPage() {
             });
     }, []);
 
-    const defaultDisplayCount = 5; // 初期表示件数
-    const [displayCount, setDisplayCount] = useState(defaultDisplayCount);
+    const displayUsers = isExpanded ? users : users.slice(0, initialDisplayCount);
 
-    const isExpanded = displayCount > defaultDisplayCount; // 全件表示中か判定
-    console.log('isExpanded:', isExpanded);
-
-    const toggleExpanded = () => {
-        console.log('toggleExpanded isExpanded:', isExpanded);
-        // isExpanded が true の状態で押されたら初期表示件数に戻す
-        setDisplayCount(isExpanded ? defaultDisplayCount : users.length);
-    };
+    const toggleExpanded = () => setIsExpanded(!isExpanded);
 
     return (
         <div style={{ padding: '20px' }}>
             <h1>ユーザ一覧</h1>
             <ul style={{ listStyleType: 'none', padding: 0 }}>
-                {users.slice(0, displayCount).map((user) => (
+                {displayUsers.map((user) => (
                     <li
                         key={user.id}
                         style={{
@@ -46,11 +40,11 @@ export default function UsersPage() {
                         <strong>出身地:</strong> {user.location}
                     </li>
                 ))}
-                {users.length > defaultDisplayCount && (
+                {users.length > initialDisplayCount && (
                     <li style={{ textAlign: 'center', marginTop: '10px' }}>
                         <button onClick={toggleExpanded}>
                             {isExpanded
-                                ? `表示を少なくする(${defaultDisplayCount}件)`
+                                ? `表示を少なくする(${initialDisplayCount}件)`
                                 : 'もっと表示する'}
                         </button>
                     </li>

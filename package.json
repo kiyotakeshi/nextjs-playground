@@ -6,21 +6,23 @@
     "dev": "next dev --port 4000 --turbopack",
     "build": "next build",
     "start": "next start --port 4000",
-    "lint": "next lint"
+    "fmt": "prettier --write --cache --cache-location=.prettier-cache './**/*.{ts,tsx,js}'"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.0.3",
     "next": "15.1.2",
+    "postcss": "^8.5.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.3"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.1.2",
+    "classnames": "^2.5.1",
     "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "typescript": "^5"
   }
 }

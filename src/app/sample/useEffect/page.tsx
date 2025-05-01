@@ -12,19 +12,10 @@ type VideoPlayerProps = {
 const VideoPlayer = ({ src, isPlaying }: VideoPlayerProps) => {
   const ref = useRef<HTMLVideoElement>(null);
 
-  // effect は特定の event によってではなく、
-  // render 自体によって引き起こされる side effect(副作用)を指定するためのもの
-
-  // メッセージ送信はユーザーがボタンをクリックすることによって直接引き起こされるため event
-
-  // サーバー接続のセットアップは component が表示される原因となる interaction に関係なく行われる
-  // render 自体によって引き起こされるため effect
-
-  // なるべく Effect は使わずに実現できるかを考えるべし
   useEffect(() => {
     if (isPlaying) {
       console.log("calling video.play()");
-      ref.current?.play();
+     ref.current?.play();
     } else {
       console.log("calling video.pause()");
       ref.current?.pause();

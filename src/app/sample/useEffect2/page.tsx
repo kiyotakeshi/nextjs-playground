@@ -15,11 +15,15 @@ const createConnection = (serverUrl: string, roomId: string) => {
 
 const ChatRoom = ({ roomId }: { roomId: string }) => {
   const serverUrl = "https://localhost:3000";
+
   useEffect(() => {
     const connection = createConnection(serverUrl, roomId);
     connection.connect();
     return () => connection.disconnect();
+    // 再レンダーが起こっても、決して serverUrl が変化することはないため依存配列には指定しない
+    // > どのような理由で何度再レンダーが起こっても、いつも同じ値です。したがって、依存配列に追加しても意味がありません。
   }, [roomId]);
+
   return (
     <div
       style={{

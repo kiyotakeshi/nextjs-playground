@@ -43,3 +43,32 @@ https:ja.react.dev/learn/you-might-not-need-an-effect#sending-a-post-request
 > 上記の例では、1 つのエフェクトを削除しても、他のエフェクトのロジックは壊れません。これは、それらが異なるものを同期していることを示しており、分割するのが理にかなっているということです。
 > 逆に、1 つのロジックを別々のエフェクトに分割してしまうと、コードは一見「きれい」に見えるかもしれませんが、メンテナンスは困難になるでしょう。
 > そのため、コードがきれいに見えるかどうかではなく、処理が独立しているか同じかを考える必要があります。
+
+<https://ja.react.dev/learn/removing-effect-dependencies#does-some-reactive-value-change-unintentionally>
+
+> ChatRoom コンポーネントの再レンダーごとに、新しい options オブジェクトがゼロから再作成されます。
+> React は、options オブジェクトが前回のレンダー時に作成された options オブジェクトとは異なるオブジェクトであると認識します。
+> 従って、（options に依存する）エフェクトの再同期が発生し、タイピングによりチャットの再接続が発生してしまいます。
+> この問題はオブジェクトと関数にのみ影響します。JavaScript では、新しく作成されたオブジェクトや関数は、他のすべてのオブジェクトや関数とは異なると見なされます。
+> 中身が同じであっても関係ありません！
+
+> オブジェクト型や関数型の依存値は、エフェクトが必要以上に再同期される原因となります。
+> したがって、エフェクトの依存値としてのオブジェクトや関数は、可能な限り避けるべきです。
+> 代わりに、それらをコンポーネントの外側やエフェクトの内側に移動させるか、あるいはそれらからプリミティブな値を抽出するよう試みてください。
+
+> 親コンポーネントの再レンダーのたびに、エフェクトによる再接続が発生してしまいます。これを修正するには、エフェクトの外側でオブジェクトから情報を読み取っておき、オブジェクトや関数自体を依存値として持たせないようにします。
+
+```javascript
+function ChatRoom({ options }) {
+  const [message, setMessage] = useState('');
+
+  const { roomId, serverUrl } = options;
+  useEffect(() => {
+    const connection = createConnection({
+      roomId: roomId,
+      serverUrl: serverUrl
+    });
+    connection.connect();
+    return () => connection.disconnect();
+  }, [roomId, serverUrl]); // ✅ All dependencies declared
+```
